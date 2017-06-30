@@ -1,4 +1,5 @@
-{
+var path = require('path');
+module.exports={
   "extends": "airbnb",
   "rules": {
     "no-param-reassign": [2, { "props": false }],
@@ -9,13 +10,18 @@
     "space-before-function-paren": [2, "never"],
     "no-console": 0,
     "object-shorthand": 0,
-    "max-len": ["warn", 100]
+    "max-len": ["warn", 100],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "import/no-extraneous-dependencies": 0
   },
   "plugins": ["import"],
   "settings": {
     "import/resolver": {
-      "webpack": {
-        "config": "webpack.config.js"
+      // "webpack": {
+      //   "config": path.resolve(__dirname, "./webpack.config.js")
+      // },
+      "node": {
+        "paths": path.resolve(__dirname, "./client")
       }
     }
   }
