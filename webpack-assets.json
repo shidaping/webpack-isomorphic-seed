@@ -1,1 +1,16 @@
-{"javascript":{"all":"http://192.168.56.1:5100/projectName/all.js","todo-list":"http://192.168.56.1:5100/projectName/todo-list.js","vendor":"http://192.168.56.1:5100/projectName/vendor.js"},"styles":{"all":"http://192.168.56.1:5100/projectName/all.css","vendor":"http://192.168.56.1:5100/projectName/vendor.css"},"assets":{"./client/modules/todo/pages/home/images/test.png":"http://192.168.56.1:5100/projectName/9c592e0b537e66ad2953fb99ca50a829.png","./client/components/main/main.less":"// removed by extract-text-webpack-plugin"}}
+{
+  "javascript": {
+    "all": "/static/all.js",
+    "vendor": "/static/vendor.js"
+  },
+  "styles": {},
+  "assets": {
+    "./client/modules/todo/pages/home/images/test.png": "/static/9c592e0b537e66ad2953fb99ca50a829.png",
+    "./client/components/main/main.less": {
+      "_style": ".nav a.active {\n  color: red;\n}\n"
+    }
+  },
+  "webpack": {
+    "version": "3.8.1"
+  }
+}

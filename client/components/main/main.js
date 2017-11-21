@@ -21,3 +21,4 @@ Main.propTypes = {
   children: PropTypes.any,
 };
 export default Main;
+

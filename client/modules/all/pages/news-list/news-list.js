@@ -26,5 +26,5 @@ NewsList.propTypes = {
 };
 export default connect(
   state => ({ dataNewsList: state.newsList.dataNewsList }),
-  dispatch => ({ actionAjaxGetNewsList: () => actionAjaxGetNewsList(dispatch) })
+  { actionAjaxGetNewsList },
 )(NewsList);

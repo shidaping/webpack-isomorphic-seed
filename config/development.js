@@ -1,4 +1,7 @@
+var ip = require('ip');
 module.exports = {
   mock: true,
-  staticFilePort: 5100,
+  // publicPath: `//${ip.address()}:5100/static/`,
+  publicPath: '/static/',
+  notUseDevServer: true,
 };

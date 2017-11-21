@@ -1,23 +1,39 @@
 var webpack = require('webpack');
 var path = require('path');
-var nodeModulesDir = path.join(__dirname, 'node_modules');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var config = require('./config');
-var env = config.env;
-var fs = require('fs');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var AssetsWebpackPlugin = require('assets-webpack-plugin');
-var webackConfig = {
-  entry: {
+var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
+var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+
+var nodeModulesDir = path.join(__dirname, 'node_modules');
+
+
+var env = config.env;
+var entry = {};
+var webackConfig;
+if (config.env === 'development') {
+  entry = {
     all: ['./client/modules/all/index.js'],
+    vendor: [],
+  };
+} else {
+  entry = {
+    all: ['./client/modules/all/index.js'],
+    dashboard: ['./client/modules/dashboard/index.js'],
     'todo-list': ['./client/modules/todo/index.js'],
-    vendor: ['jquery', 'font-awesome.css'],
-  },
+    vendor: [],
+  };
+}
+
+webackConfig = {
+  entry: entry,
+  devtool: 'sourcemap',
   output: {
-    publicPath: `http://${config.staticFileHost}:${config.staticFilePort}/${config.staticFilePrefix}/`,
-    path: './assets',
-    filename: env === 'development' ? '[name].js' : '[name]-[hash].js',
+    publicPath: config.publicPath,
+    path: path.resolve(__dirname, 'dist'),
+    filename: env === 'development' ? '[name].js' : '[name]-[chunkhash].js',
     // chunkFilename: "[id].js"
   },
 
@@ -28,31 +44,22 @@ var webackConfig = {
   // },
   resolve: {
     alias: {
-      'font-awesome.css': path.resolve(nodeModulesDir, 'font-awesome/css/font-awesome.min.css'),
-      jquery: path.resolve(nodeModulesDir, 'jquery/dist/jquery.min.js'),
+      // 'font-awesome.css': path.resolve(nodeModulesDir, 'font-awesome/css/font-awesome.min.css'),
+      // jquery: path.resolve(nodeModulesDir, 'jquery/dist/jquery.min.js'),
       // client: path.resolve('./client'),
-      config: path.resolve('config'),
+      // vue: 'vue/dist/vue.js',
     },
-    modulesDirectories: [
+    modules: [
       'node_modules',
       'client',
     ],
-    extensions: ['', '.js', '.jsx', '.less'],
-    root: [
-      // path.resolve('./client'),
-      // path.resolve('./node_modules'),
-      //path.resolve(__dirname, './client'),
-    ],
+    extensions: ['.js', '.jsx', '.less', '.ts'],
   },
   plugins: [
     // new webpack.HotModuleReplacementPlugin(),
-    new WebpackIsomorphicToolsPlugin(
-      require('./webpack-isomorphic-tools.js') // eslint-disable-line global-require
-    ),
     new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
-    new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin(
-      (env !== 'development') ? '[name]-[hash].css' : '[name].css',
+      (env !== 'development') ? '[name]-[chunkhash].css' : '[name].css',
       { allChunks: true }
     ),
     // function() {
@@ -65,11 +72,10 @@ var webackConfig = {
     // },
   ],
   module: {
-    noParse: ['./src/noparse/*'],
-    loaders: [{
+    rules: [{
       test: /\.js$/,
-      loaders: ['babel'],
       exclude: /(node_modules)/,
+      use: ['react-hot-loader/webpack','babel-loader'],
     // }, {
     //   test: /\.less$/,
     //  css?-autoprefixer!postcss!less
@@ -77,12 +83,23 @@ var webackConfig = {
     // }, {
     //   test: /\.css$/,
     //   loader: 'style!css'
+
     }, {
-      test: /\.less$/,
-      loader: ExtractTextPlugin.extract('style', 'css?-autoprefixer!less'),
+      test: /\.ts$/,
+      loaders: ['babel-loader'],
+      exclude: /(node_modules)/,
     }, {
-      test: /\.css$/,
-      loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+      test: /(\.less|\.css)$/,
+      // use: ['style-loader', 'css-loader', 'less-loader', 'postcss-loader'],
+      use: env === 'development' ? ['style-loader', 'css-loader', 'less-loader', 'postcss-loader'] :
+        ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'less-loader', 'postcss-loader'],
+        }),
+
+    // }, {
+    //   test: /\.css$/,
+    //   loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
     }, {
       test: /\.jpg|\.png$/,
       loader: 'file-loader',
@@ -111,6 +128,7 @@ var webackConfig = {
 webackConfig.plugins.push(new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: config.env !== 'development' ? JSON.stringify('production') : JSON.stringify('development'),
+    BABEL_ENV: config.env !== 'development' ? JSON.stringify('production') : JSON.stringify('development'),
   },
 }));
 // }
@@ -119,25 +137,41 @@ webackConfig.plugins.push(
   new AssetsWebpackPlugin()
 );
 
-webackConfig.plugins.push(
-  new HtmlWebpackPlugin({
-    filename: 'views/all.html',
-    template: path.join(__dirname, './client/views/template.html'),
-    chunks: ['vendor', 'all'],
-    minify: {
-      collapseWhitespace: true
-    },
-  })
-);
+if (config.evn !== 'development') {
+  webackConfig.plugins.push(
+    new HtmlWebpackPlugin({
+      filename: 'views/all.html',
+      template: path.join(__dirname, './client/views/template.html'),
+      chunks: ['vendor', 'all'],
+      minify: {
+        collapseWhitespace: true,
+      },
+    })
+  );
 
-webackConfig.plugins.push(
-  new HtmlWebpackPlugin({
-    filename: 'views/todo-list.html',
-    template: path.join(__dirname, './client/views/todo-list.html'),
-    chunks: ['vendor', 'todo-list'],
-    minify: {
-      collapseWhitespace: true
-    }
-  })
-);
+  webackConfig.plugins.push(
+    new HtmlWebpackPlugin({
+      filename: 'views/todo-list.html',
+      template: path.join(__dirname, './client/views/todo-list.html'),
+      chunks: ['vendor', 'todo-list'],
+      minify: {
+        collapseWhitespace: true,
+      }
+    })
+  );
+}
+if (config.notUseDevServer) {
+  var hotClient = 'webpack-hot-middleware/client';
+  for (var key in webackConfig.entry) {
+    // 为entry增加热加载
+    console.log(webackConfig.entry[key])
+    webackConfig.entry[key].push(hotClient);
+    webackConfig.entry[key] = ['react-hot-loader/patch'].concat(webackConfig.entry[key]);
+  }
+  webackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+  webackConfig.plugins.push(
+    // webpack-isomorphic-tools with development
+    webpackIsomorphicToolsPlugin.development()
+  );
+}
 module.exports = webackConfig;

@@ -18,21 +18,10 @@ const store = createStore(
 
 const history = syncHistoryWithStore(browserHistory, store)
 
-ReactDOM.render((
+const app = (
   <Provider store={store}>
     <Router routes={routes} history={history} />
   </Provider>
-), document.getElementById('app'));
+);
+export default app;
 
-if (module.hot) {
-  module.hot.accept('./routes', () => {
-    ReactDOM.unmountComponentAtNode(document.getElementById('app'));
-    const nextRoutes = require('./routes').default;
-    ReactDOM.render(
-      <Provider store={store}>
-        <Router routes={nextRoutes} history={history} />
-      </Provider>,
-      document.getElementById('app'),
-    );
-  });
-}
