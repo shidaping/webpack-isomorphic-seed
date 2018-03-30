@@ -1,7 +1,7 @@
 import config from '../../config';
 export default {
   serverRender: (res, page, context, ...options) => {
-    res.render(page);
+    res.render(page, context);
   },
   serverStaticRender: (res, page, component, data) =>  {
     let script = '';
@@ -10,7 +10,7 @@ export default {
     }
     console.log(component);
     res.render(page, {
-      html: component,
+      html: component || '',
       script,
     });
   },

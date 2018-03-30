@@ -16,7 +16,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('common'));
 
 if (config.env === 'testing') {
-  app.use('/projectName', express.static(path.join(__dirname, '../assets')));
+  app.use('/', express.static(path.join(__dirname, '../dist')));
 }
 
 if (config.notUseDevServer && config.env === 'development') {
@@ -64,7 +64,7 @@ routes(app);
 if (config.env === 'development') {
   app.set('views', path.join(__dirname, '../client/views/'));
 } else {
-  app.set('views', path.join(__dirname, '../assets/views/'));
+  app.set('views', path.join(__dirname, '../dist/views/'));
 }
 app.disable('x-powered-by');
 app.enable('trust proxy');

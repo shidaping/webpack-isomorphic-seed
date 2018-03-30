@@ -8,6 +8,9 @@
     "./client/modules/todo/pages/home/images/test.png": "/static/9c592e0b537e66ad2953fb99ca50a829.png",
     "./client/components/main/main.less": {
       "_style": ".nav a.active {\n  color: red;\n}\n"
+    },
+    "./client/modules/all/pages/news-list/news-list.less": {
+      "_style": ".page-news-list ul li {\n  display: flex;\n  border-radius: 3px;\n}\n"
     }
   },
   "webpack": {

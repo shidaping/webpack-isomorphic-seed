@@ -10,7 +10,8 @@
     "serve": "nodemon dev.js",
     "deploy": "rm -rf dist && NODE_ENV=production webpack -p --progress",
     "deploy-testing": "rm -rf dist && NODE_ENV=testing webpack -p --progress",
-    "build": "rm -rf assets && webpack -p --progress"
+    "build": "rm -rf dist && webpack -p --progress",
+    "start-testing": "NODE_ENV=testing node index.js"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,7 @@
     "bright-ui": "git+https://github.com/shidaping/bright-ui.git",
     "classnames": "^2.2.5",
     "cookie-parser": "^1.4.3",
-    "css-loader": "^0.25.0",
+    "css-loader": "^0.28.4",
     "ejs": "^2.5.2",
     "express": "^4.14.0",
     "extract-text-webpack-plugin": "^3.0.0",
@@ -79,5 +80,9 @@
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1",
     "webpack-hot-middleware": "^2.19.1"
-  }
+  },
+  "browserslist": [
+    "> 0.02%",
+    "last 2 versions"
+  ]
 }

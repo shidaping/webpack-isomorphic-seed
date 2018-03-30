@@ -16,16 +16,18 @@ var webackConfig;
 if (config.env === 'development') {
   entry = {
     all: ['./client/modules/all/index.js'],
-    vendor: [],
+    // vendor: [],
   };
 } else {
   entry = {
     all: ['./client/modules/all/index.js'],
-    dashboard: ['./client/modules/dashboard/index.js'],
     'todo-list': ['./client/modules/todo/index.js'],
-    vendor: [],
+    // vendor: [],
   };
 }
+
+console.log('aaaacccccccccccc');
+console.log(env);
 
 webackConfig = {
   entry: entry,
@@ -91,10 +93,29 @@ webackConfig = {
     }, {
       test: /(\.less|\.css)$/,
       // use: ['style-loader', 'css-loader', 'less-loader', 'postcss-loader'],
-      use: env === 'development' ? ['style-loader', 'css-loader', 'less-loader', 'postcss-loader'] :
+      use: env === 'development' ? ['style-loader', 'css-loader',
+        {
+          loader: 'postcss-loader',
+          options: {
+            ident: 'postcss',
+            plugins: (loader) => {
+              console.log('333333333333');
+              [
+                require('postcss-import')({ root: loader.resourcePath }),
+                require('postcss-cssnext')(),
+                require('autoprefixer')(),
+                require('cssnano')(),
+              ]
+            },
+            // config: {
+            //   path: './postcss.config.js'
+            // }
+          }
+        },
+        'less-loader'] :
         ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'less-loader', 'postcss-loader'],
+          use: ['css-loader', 'postcss-loader', 'less-loader'],
         }),
 
     // }, {
@@ -137,7 +158,7 @@ webackConfig.plugins.push(
   new AssetsWebpackPlugin()
 );
 
-if (config.evn !== 'development') {
+if (config.env !== 'development') {
   webackConfig.plugins.push(
     new HtmlWebpackPlugin({
       filename: 'views/all.html',

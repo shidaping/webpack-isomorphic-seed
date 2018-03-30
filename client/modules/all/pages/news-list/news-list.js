@@ -10,7 +10,7 @@ class NewsList extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div className="page-news-list">
         <ul>
           {this.props.dataNewsList.map((item) => (
             <li key={item.id}>{item.title}</li>
