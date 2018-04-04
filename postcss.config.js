@@ -21,6 +21,6 @@ console.error('aaaaaaaaaaaa');
 // };
 module.exports = {
   plugins: [
-    require('autoprefixer'),
+    require('autoprefixer')(),
   ],
 };

@@ -93,26 +93,7 @@ webackConfig = {
     }, {
       test: /(\.less|\.css)$/,
       // use: ['style-loader', 'css-loader', 'less-loader', 'postcss-loader'],
-      use: env === 'development' ? ['style-loader', 'css-loader',
-        {
-          loader: 'postcss-loader',
-          options: {
-            ident: 'postcss',
-            plugins: (loader) => {
-              console.log('333333333333');
-              [
-                require('postcss-import')({ root: loader.resourcePath }),
-                require('postcss-cssnext')(),
-                require('autoprefixer')(),
-                require('cssnano')(),
-              ]
-            },
-            // config: {
-            //   path: './postcss.config.js'
-            // }
-          }
-        },
-        'less-loader'] :
+      use: env === 'development' ? ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'] :
         ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: ['css-loader', 'postcss-loader', 'less-loader'],
